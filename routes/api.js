@@ -80,8 +80,8 @@ router.get('/products/:id', async (req, res, next) => {
 
 //Thêm sản phấm
 router.post('/products', async (req, res, next) => {
-    let { name, price, categoryId, img, description } = req.body;
-    // let img = req.file;
+    let { name, price, categoryId, description, img } = req.body;
+    //let img = req.file;
     const db = await connectDb();
     const productCollection = db.collection('products');
     let lastProduct = await productCollection.find().sort({ id: - 1 }).limit(1).toArray();
@@ -101,7 +101,7 @@ router.put('/products/:id', async (req, res, next) => {
     let id = req.params.id;
     const db = await connectDb();
     const productCollection = db.collection('products');
-    let { name, price, img, categoryId, description } = req.body;
+    let { name, price, categoryId, description, img } = req.body;
     // if (req.file) {
     //     var img = req.file.originalname;
     // } else {
@@ -135,7 +135,7 @@ router.delete('/products/:id', async (req, res, next) => {
 //---------------------------Categories--------------------------------//
 
 // Lấy danh sách các danh mục
-router.get('/categories', async (req, res, next) => {
+router.get('/category', async (req, res, next) => {
     try {
         const db = await connectDb();
         const categoriesCollection = db.collection('categories');
@@ -147,15 +147,14 @@ router.get('/categories', async (req, res, next) => {
 });
 
 // Thêm danh mục mới
-router.post('/categories',  async (req, res, next) => {
+router.post('/category', upload.single('img'), async (req, res, next) => {
     try {
         const db = await connectDb();
         const categoriesCollection = db.collection('categories');
-        let { name, img } = req.body;
-        // let img = req.file ? req.file.originalname : null; // Kiểm tra xem req.file có tồn tại không trước khi truy cập thuộc tính 'originalname'
+        let { name } = req.body;
         let lastCategory = await categoriesCollection.find().sort({ id: -1 }).limit(1).toArray();
         let id = lastCategory[0] ? lastCategory[0].id + 1 : 1;
-        let newCategory = { id, name, img };
+        let newCategory = { id, name};
         await categoriesCollection.insertOne(newCategory);
         res.status(201).json(newCategory);
     } catch (error) {
@@ -164,7 +163,7 @@ router.post('/categories',  async (req, res, next) => {
 });
 
 // Lấy danh mục theo ID
-router.get('/categories/:id', async (req, res, next) => {
+router.get('/category/:id', async (req, res, next) => {
     try {
         const categoryId = parseInt(req.params.id); // Lấy ID của danh mục từ request params
         const db = await connectDb();
@@ -184,7 +183,7 @@ router.get('/categories/:id', async (req, res, next) => {
 });
 
 // Sửa danh mục
-router.put('/categories/:id', upload.single('img'), async (req, res, next) => {
+router.put('/category/:id', upload.single('img'), async (req, res, next) => {
     try {
         const db = await connectDb();
         const categoriesCollection = db.collection('categories');
@@ -208,7 +207,7 @@ router.put('/categories/:id', upload.single('img'), async (req, res, next) => {
 });
 
 // Xóa danh mục
-router.delete('/categories/:id', async (req, res, next) => {
+router.delete('/category    /:id', async (req, res, next) => {
     try {
         let id = req.params.id;
         const db = await connectDb();
@@ -387,14 +386,14 @@ router.get('/users/:id', async (req, res, next) => {
 });
 
 //Post thêm users
-router.post('/users', async (req, res, next) => {
-    let {fullname, username, sdt, password, repassword, email, role } = req.body;
+router.post('/users', upload.single('img'), async (req, res, next) => {
+    let { username, password, repassword, email, role } = req.body;
     let img = req.file;
     const db = await connectDb();
     const usersCollection = db.collection('users');
     let lastUser = await usersCollection.find().sort({ id: -1 }).limit(1).toArray();
     let id = lastUser[0] ? lastUser[0].id + 1 : 1;
-    let newUser = { id, fullname, username, password, sdt, email, isAdmin: role === '0' };
+    let newUser = { id, username, password, email, img, isAdmin: role === 'admin' };
     await usersCollection.insertOne(newUser);
     if (newUser) {
         res.status(200).json(newUser);
@@ -438,8 +437,8 @@ router.delete('/users/:id', async (req, res, next) => {
     }
 });
 
-router.post('/users/register', async (req, res, next) => {
-    let { email, password, fullname, username } = req.body;
+router.post('/users/register', upload.single('img'), async (req, res, next) => {
+    let { email, password, fullname } = req.body;
     const db = await connectDb();
     const userCollection = db.collection('users');
     let user = await userCollection.findOne({ email: email });
@@ -450,7 +449,7 @@ router.post('/users/register', async (req, res, next) => {
         let id = lastuser[0] ? lastuser[0].id + 1 : 1;
         const salt = bcrypt.genSaltSync(10);
         let hashPassword = bcrypt.hashSync(password, salt);
-        let newUser = { id: id, email, password: hashPassword, fullname, username, isAdmin: 0 };
+        let newUser = { id: id, email, password: hashPassword, fullname, isAdmin: 0 };
         try {
             let result = await userCollection.insertOne(newUser);
             console.log(result);
@@ -461,76 +460,32 @@ router.post('/users/register', async (req, res, next) => {
         }
     }
 })
-router.get('/users/username/:username', async (req, res, next) => {
-    try {
-      const db = await connectDb();
-      const usersCollection = db.collection('users');
-      const { fullname, phoneNumber } = req.body;
-      const editUserInfo = { fullname, phoneNumber };
-      const username = req.params.username;
-  
-      const updatedUser = await usersCollection.updateOne({ username: username }, { $set: editUserInfo });
-  
-      if (updatedUser.modifiedCount > 0) {
-        res.status(200).json(editUserInfo);
-      } else {
-        res.status(404).json({ message: 'Không tìm thấy người dùng hoặc không có sự thay đổi.' });
-      }
-    } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật thông tin người dùng.' });
-    }
-  });
-
-  router.put('/users/username/:username', async (req, res, next) => {
-    try {
-      const db = await connectDb();
-      const usersCollection = db.collection('users');
-      const { fullname, phoneNumber } = req.body;
-      const editUserInfo = { fullname, phoneNumber };
-      const username = req.params.username;
-  
-      const updatedUser = await usersCollection.updateOne({ username: username }, { $set: editUserInfo });
-  
-      if (updatedUser.modifiedCount > 0) {
-        res.status(200).json(editUserInfo);
-      } else {
-        res.status(404).json({ message: 'Không tìm thấy người dùng hoặc không có sự thay đổi.' });
-      }
-    } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật thông tin người dùng.' });
-    }
-  });
 
 const jwt = require('jsonwebtoken');
 
 router.post('/users/login', upload.single('img'), async (req, res, next) => {
-    let { username, password } = req.body;
+    let { email, password } = req.body;
 
     const db = await connectDb();
     const userCollection = db.collection('users');
-    let user = await userCollection.findOne({ username: username });
+    let user = await userCollection.findOne({ email: email });
 
     if (user) {
         if (bcrypt.compareSync(password, user.password)) {
             const token = jwt.sign({
-                username: user.username,
                 email: user.email,
-                sdt: user.sdt,
                 fullname: user.fullname, // Thêm fullname vào payload của token
                 isAdmin: user.isAdmin
             }, 'secretkey', { expiresIn: '10s' });
-            res.status(200).json({ token: token,username: user.username, email: user.email, sdt: user.sdt, fullname: user.fullname, isAdmin: user.isAdmin }); // Trả về fullname cùng với token
+            res.status(200).json({ token: token, fullname: user.fullname }); // Trả về fullname cùng với token
         } else {
-            res.status(403).json({ message: 'username hoặc mật khẩu không đúng cho lắm' })
+            res.status(403).json({ message: 'Email hoặc mật khẩu không đúng cho lắm' })
         }
     } else {
         res.status(403).json({ messsage: 'Đăng ký cái nhẹ đi bạn ơi' });
     }
 
 });
-
 //Xác thực token
 function authenToken(req, res, next) {
     const bearerHeader = req.headers['authorization'];
