@@ -1,0 +1,147 @@
+.vegetable-carousel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+/* CSS for horizontal pagination */
+.pagination {
+    display: inline-block;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.pagination li a,
+.pagination li button {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+/* 
+ */
+/* Thêm CSS mới hoặc thay đổi trong file CSS hiện tại của bạn */
+.login-container {
+    width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"] {
+    width: calc(100% - 40px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-container button {
+    width: calc(100% - 40px);
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background: #0056b3;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #007bff;
+    text-decoration: none;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    z-index: 9999;
+}
+
+.back-to-top:hover {
+    color: #0056b3;
+    border-color: #0056b3;
+}
+
+/*  */
+.register-container {
+    width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.register-container input[type="email"],
+.register-container input[type="text"],
+.register-container input[type="password"] {
+    width: calc(100% - 40px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.register-container button {
+    width: calc(100% - 40px);
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-container button:hover {
+    background: #0056b3;
+}
+
+.register-container p {
+    margin-top: 15px;
+}
+
+.register-container p a:hover {
+    text-decoration: underline;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #007bff;
+    text-decoration: none;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    z-index: 9999;
+}
+
+.back-to-top:hover {
+    color: #0056b3;
+    border-color: #0056b3;
+}

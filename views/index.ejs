@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang Chủ - Hoa Vân</title>
+  <!-- Thư viện CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- CSS tùy chỉnh -->
+  <style>
+    body {
+      background-color: black; /* Màu nền của giao diện tối */
+      color: #fff; /* Màu văn bản của giao diện tối */
+    }
+
+    .logo h1 {
+      margin: 0; /* Reset margin để h1 không tạo khoảng cách */
+    }
+
+    .avatar-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 80px; /* Kích thước của hình ảnh avatar */
+      height: 80px;
+      border-radius: 50%; /* Bo tròn hình ảnh */
+      margin-left: auto; /* Đẩy avatar sang phải */
+      cursor: pointer; /* Biểu tượng con trỏ khi di chuột qua */
+    }
+
+    #logoutBtn {
+      margin-left: 10px; /* Khoảng cách giữa avatar và nút đăng xuất */
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="logo">
+            <h1>Hoa Vân</h1>
+          </div>
+        </div>
+        <div class="col-md-6 text-right">
+          <div class="login-signup">
+            <% if (!userAvatar) { %>
+            <!-- Nếu không có avatar, hiển thị nút đăng nhập và đăng ký -->
+            <a href="./users/login" class="btn btn-primary">Đăng Nhập</a>
+            <a href="./users/register" class="btn btn-outline-primary">Đăng Ký</a>
+            <% } else { %>
+            <!-- Nếu có avatar, hiển thị avatar và nút đăng xuất -->
+            <div class="avatar-container">
+              <img src="/images/<%= userAvatar %>" alt="User Avatar" class="avatar avatar-image">
+              <button id="logoutBtn" class="btn btn-danger">Đăng Xuất</button>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Phần nội dung trang -->
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <% if (!userFullName) { %>
+          <!-- Nếu chưa đăng nhập -->
+          <h2>Xin chào, đây là trang chủ của Hoa Vân</h2>
+        <% } else { %>
+          <!-- Nếu đã đăng nhập -->
+          <h2>Chào mừng <%= userFullName %>, đã tới Hoa Vân nơi bạn là khách hàng chứ không phải ông trời!!!</h2>
+        <% } %>
+        <!-- Thêm nội dung khác tùy theo yêu cầu -->
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Thư viện JavaScript -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Script tùy chỉnh -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const logoutBtn = document.getElementById('logoutBtn');
+      const avatarImage = document.querySelector('.avatar-image');
+
+      // Kiểm tra nếu avatar và nút đăng xuất tồn tại
+      if (avatarImage && logoutBtn) {
+        // Ẩn nút đăng xuất ban đầu
+        logoutBtn.style.display = 'none';
+
+        // Bắt sự kiện click vào avatar
+        avatarImage.addEventListener('click', function() {
+          // Hiển thị hoặc ẩn nút đăng xuất
+          logoutBtn.style.display = (logoutBtn.style.display === 'none') ? 'inline-block' : 'none';
+        });
+
+        // Bắt sự kiện click vào nút đăng xuất
+        logoutBtn.addEventListener('click', function(event) {
+          event.preventDefault();
+          // Gửi yêu cầu đăng xuất đến máy chủ
+          fetch('/users/logout', {
+              method: 'POST',
+              credentials: 'same-origin'
+            })
+            .then(response => {
+              if (response.ok) {
+                // Đăng xuất thành công, chuyển hướng người dùng đến trang đăng nhập
+                window.location.href = './home';
+              } else {
+                console.error('Đã xảy ra lỗi khi đăng xuất');
+              }
+            })
+            .catch(error => console.error('Lỗi: ', error));
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
